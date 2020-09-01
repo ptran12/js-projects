@@ -74,12 +74,34 @@ const menu = [
 ];
 
 const sectionCenter = document.querySelector('.section-center');
+const filterBtns = document.querySelectorAll('.filter-btn');
 
 window.addEventListener("DOMContentLoaded", function () {
   // console.log('test');
-  let displayMenu = menu.map(function (item) {
-    // console.log(item);
+  displayMenuItems(menu)
+});
 
+// filters
+filterBtns.forEach(function(btn){
+  btn.addEventListener('click', function(e){
+    // console.log(e.currentTarget.dataset.id);
+    const category = e.currentTarget.dataset.id;
+    const menuCategory = menu.filter(function(menuItems){
+    if(menuItems.category === category)
+      return menuItems;
+    });
+    if(category === 'all'){
+      displayMenuItems(menu)
+    }
+    else{
+      displayMenuItems(menuCategory)
+    }
+  });
+});
+
+function displayMenuItems(menuItems){
+  let displayMenu = menuItems.map(function (item) {
+    // console.log(item);
     return `<article class="menu-item">
     <img src=${item.img} class='photo' alt=${item.title}>
     <div class="item-info">
@@ -96,4 +118,4 @@ window.addEventListener("DOMContentLoaded", function () {
   displayMenu = displayMenu.join("")
   // console.log(displayMenu);
   sectionCenter.innerHTML = displayMenu
-});
+}
