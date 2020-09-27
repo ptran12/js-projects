@@ -64,7 +64,11 @@ function addItem(e){
         // set back to default
         setBackToDefault();
         } else if(value && editFlag) {
-            console.log('editing');
+            editElement.innerHTML = value;
+            displayAlert('value changed', 'success');
+            // edit local storage
+            editLocalStorage(editID, value)
+            setBackToDefault()
         } else{
              displayAlert('please enter value', 'danger')
     }
@@ -92,21 +96,38 @@ function clearItems() {
     container.classList.remove('show-container');
     displayAlert('empty list', 'danger');
     setBackToDefault();
+    localStorage.removeItem('list')
 }
 
 // delete function
 function deleteItem(e) {
     const element = e.currentTarget.parentElement.parentElement
+    const id = element.dataset.id;
     console.log(element);
     list.removeChild(element);
     if(list.children.length === 0) {
         container.classList.remove('show-container')
     }
+    displayAlert('item removed', 'danger');
+    setBackToDefault();
+    // remove from local storage 
+    removeFromLocalStorage(id);
 }
 
 // edit function
-function editItem() {
-    console.log('item edited');
+function editItem(e) {
+    // console.log('item edited');
+    const element = e.currentTarget.parentElement.parentElement
+    console.log(element);
+    //set edit item
+    editElement = e.currentTarget.parentElement.previousElementSibling;
+    console.log(editElement);
+    //set form value
+    grocery.value = editElement.innerHTML;
+    editFlag = true;
+    editID = element.dataset.id;
+    submitBtn.textContent = 'edit';
+
 }
 
 
@@ -120,6 +141,30 @@ function setBackToDefault(){
 
 // ****** LOCAL STORAGE **********
 function addToLocalStorage(id, value){
-    console.log('added to local storage')
+    const grocery = {id:id,value:value}
+    let items = getLocalStorage();
+    // console.log(items);
+    items.push(grocery);
+    localStorage.setItem('list', JSON.stringify(items))
+
+    // console.log(grocery);
+    // console.log('added to local storage')
+
+}
+function removeFromLocalStorage(id) {
+    let items = getLocalStorage();
+    items = items.filter(function(item) {
+        if(item.id !==id) {
+            return item
+        }
+    })
+    localStorage.setItem('list', JSON.stringify(items))
+}
+
+function editLocalStorage(id, value) {}
+function getLocalStorage() {
+    return localStorage.getItem('list')
+    ? JSON.parse(localStorage.getItem('list'))
+    : [];
 }
 // ****** SETUP ITEMS **********
